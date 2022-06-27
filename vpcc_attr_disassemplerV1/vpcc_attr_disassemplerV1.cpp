@@ -134,7 +134,7 @@ int GetAnnexbNALU(NALU_t* nalu) {
 * where i fragments are relialbe
 * p fragments are unrelialbe
 */
-int file_cut(char *url, int nal_num, int data_offset, int len, char* idc_str) {
+int file_cut(char *url, char *path_output,int nal_num, int data_offset, int len, char* idc_str) {
     char dispos = 0;
     //if the idc_str is disposible or low priority, means it is not essential
     //then we label it with p prefix on the fragment file
@@ -147,9 +147,12 @@ int file_cut(char *url, int nal_num, int data_offset, int len, char* idc_str) {
     char filename[100];
     //construct the filename of fragment
     sprintf(filename, "%c_%d.nal", dispos, nal_num);
+    char file_path[200] = "";
+    strcpy_s(file_path, path_output);
+    strcat_s(file_path, filename);
     //printf("%s", filename);
     FILE* fp;
-    fp = fopen(filename, "wb");
+    fp = fopen(file_path, "wb");
     FILE* h264bitstream = fopen(url, "rb+");
     if (h264bitstream == NULL) {
         printf("Open file error\n");
@@ -178,7 +181,7 @@ int file_cut(char *url, int nal_num, int data_offset, int len, char* idc_str) {
  * Analysis H.264 Bitstream
  * @param url    Location of input H.264 bitstream file.
  */
-int simplest_h264_parser(char* url) {
+int simplest_h264_parser(char* url, char* path2, char* path_output) {
 
     NALU_t* n;
     int buffersize = 100000;
@@ -243,9 +246,8 @@ int simplest_h264_parser(char* url) {
 
         fprintf(myout, "%5d| %8d| %7s| %6s| %8d|\n", nal_num, data_offset, idc_str, type_str, n->len);
         //printf("%d %d %d %s\n", nal_num, data_offset, n->len + 4, idc_str);
-        char path2[107] = "C:\\Users\\walter\\Dropbox\\Research Projects\\MetaverseQUIC\\vpcc_eng\\sample_attr_h264\\s2_GOF0_attribute.h264.2";
         //file_cut(path2, nal_num, data_offset, n->len + n->startcodeprefix_len, idc_str);
-        file_cut(path2, nal_num, data_offset, data_lenth, idc_str);
+        file_cut(path2, path_output, nal_num, data_offset, data_lenth, idc_str);
         data_offset = data_offset + data_lenth;
 
         nal_num++;
@@ -261,9 +263,35 @@ int simplest_h264_parser(char* url) {
     }
     return 0;
 }
-int main() {
-    char path[105] = "C:\\Users\\walter\\Dropbox\\Research Projects\\MetaverseQUIC\\vpcc_eng\\sample_attr_h264\\s2_GOF0_attribute.h264";
-    int output = simplest_h264_parser(path);
+int main(int argc, char *argv[]) {
+    //char path[105] = "C:\\Users\\walter\\Dropbox\\Research Projects\\MetaverseQUIC\\vpcc_eng\\sample_attr_h264\\s2_GOF0_attribute.h264";
+    //char path2[107] = "C:\\Users\\walter\\Dropbox\\Research Projects\\MetaverseQUIC\\vpcc_eng\\sample_attr_h264\\s2_GOF0_attribute.h264.2";
+    //char path[105] = "C:\\Users\\walter\\Dropbox\\Research Projects\\MetaverseQUIC\\vpcc_eng\\sample_full_h264\\s2.h264";
+    //char path2[107] = "C:\\Users\\walter\\Dropbox\\Research Projects\\MetaverseQUIC\\vpcc_eng\\sample_full_h264\\s2.h264.2";
+    //char path[105] = "C:\\Users\\walter\\Dropbox\\Research Projects\\MetaverseQUIC\\vpcc_eng\\exp1_attr_h264\\s2_GOF0_attribute.h264";
+    //char path2[107] = "C:\\Users\\walter\\Dropbox\\Research Projects\\MetaverseQUIC\\vpcc_eng\\exp1_attr_h264\\s2_GOF0_attribute.h264.2";
+    //char path[105] = "C:\\Users\\walter\\Dropbox\\Research Projects\\MetaverseQUIC\\vpcc_eng\\exp2_attr_h264\\s2_GOF0_geometry.h264";
+    //char path2[107] = "C:\\Users\\walter\\Dropbox\\Research Projects\\MetaverseQUIC\\vpcc_eng\\exp2_attr_h264\\s2_GOF0_geometry.h264.2";
+    //char path[105] = "C:\\Users\\walter\\PycharmProjects\\nalDropPSNR\\data\\origin\\attribute\\s2_GOF0_attribute.h264";
+    //char path2[107] = "C:\\Users\\walter\\PycharmProjects\\nalDropPSNR\\data\\origin\\attribute\\s2_GOF0_attribute.h264.2";
+    //char path[105] = "C:\\Users\\walter\\PycharmProjects\\nalDropPSNR\\data\\origin\\geometry\\s2_GOF0_geometry.h264";
+    //char path2[107] = "C:\\Users\\walter\\PycharmProjects\\nalDropPSNR\\data\\origin\\geometry\\s2_GOF0_geometry.h264.2";
+    //char path[105] = "C:\\Users\\walter\\PycharmProjects\\nalDropPSNR\\data\\origin\\occupancy\\s2_GOF0_occupancy.h264";
+    //char path2[107] = "C:\\Users\\walter\\PycharmProjects\\nalDropPSNR\\data\\origin\\occupancy\\s2_GOF0_occupancy.h264.2";
+    char path[105] = "D:\\loot_vox10.h264";
+    char suffix[10] = ".2";
+    char path2[107] = "D:\\loot_vox10.h264.2";
+    char path_output[200] = "";
+    printf("%d\n", argc);
+    if (argc == 3) {
+        strcpy_s(path, 100, argv[1]);
+        strcpy_s(path2, 100, path);
+        strcat_s(path2, suffix);
+        strcpy_s(path_output, 100, argv[2]);
+        printf("%s %s %s\n", path, path2, path_output);
+    }
+    
+    int output = simplest_h264_parser(path, path2, path_output);
     printf("%d\n", output);
     return 0;
 }
