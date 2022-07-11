@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="vpcc_attr_disassemplerV1.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="avcc_2_annexb.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

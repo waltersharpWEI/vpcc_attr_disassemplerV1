@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <winsock.h>
+#pragma comment(lib, "ws2_32.lib")
 
 #define NALU_TYPE_SLICE 1
 #define NALU_TYPE_DPA 2
@@ -247,7 +249,7 @@ int main(int argc, char* argv[]) {
 
 	if (mode == PARASE_MODE_EXTRA) {
 		printf("#### PARASE AVCC EXTRA DATA ####\n");
-		ret = parase_avcc_extra(buffer, ret);
+		ret = parase_avcc_extra((char*) buffer, ret);
 		if (ret < 0)
 			printf("ERROR: parase avcc data failed!\n");
 	}
